@@ -272,7 +272,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          'تطبيق سياق (Siyaq)',
+                          'تطبيق ميقاف (Meeqaf)',
                           style: TextStyle(
                             fontWeight: FontWeight.bold, 
                             fontSize: 17,

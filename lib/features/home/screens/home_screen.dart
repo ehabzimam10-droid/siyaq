@@ -64,17 +64,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     switch (_currentIndex) {
       case 0:
         return const Text(
-          'سياق • اليومي',
+          'ميقاف • اليومي',
           style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold),
         );
       case 1:
         return const Text(
-          'تقويم سياق',
+          'تقويم ميقاف',
           style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold),
         );
       case 2:
         return const Text(
-          'سياق AI',
+          'ميقاف AI',
           style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold),
         );
       case 3:
@@ -83,7 +83,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold),
         );
       default:
-        return const Text('سياق');
+        return const Text('ميقاف');
     }
   }
 

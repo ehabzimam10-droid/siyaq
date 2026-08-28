@@ -381,7 +381,7 @@ class _ApiKeysManagerScreenState extends ConsumerState<ApiKeysManagerScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'يتيح لك سياق التبديل الحر بين كافة مزودي الذكاء الاصطناعي العالميين لعام 2026. يتم حفظ جميع المفاتيح بأمان تام وتشفير محلي على جهازك فقط.',
+                                'يتيح لك ميقاف التبديل الحر بين كافة مزودي الذكاء الاصطناعي العالميين لعام 2026. يتم حفظ جميع المفاتيح بأمان تام وتشفير محلي على جهازك فقط.',
                                 style: TextStyle(
                                   fontSize: 12,
                                   height: 1.4,

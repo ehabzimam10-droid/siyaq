@@ -45,7 +45,7 @@ class SiyaqApp extends ConsumerWidget {
     };
 
     return MaterialApp(
-      title: 'سياق',
+      title: 'ميقاف - Meeqaf',
       debugShowCheckedModeBanner: false,
       
       // إعدادات التوطين واللغة العربية

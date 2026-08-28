@@ -349,7 +349,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'سياق جدول اليوم',
+                            'جدول اليوم في ميقاف',
                             style: TextStyle(
                               fontSize: isMobile ? 16 : 18,
                               fontWeight: FontWeight.bold,

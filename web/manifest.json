@@ -1,11 +1,11 @@
 {
-    "name": "siyaq",
-    "short_name": "siyaq",
+    "name": "ميقاف | Meeqaf",
+    "short_name": "ميقاف",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0B0F19",
+    "theme_color": "#D97706",
+    "description": "ميقاف - تطبيق التنظيم الذكي المتناغم مع أوقات الصلاة واليوم",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

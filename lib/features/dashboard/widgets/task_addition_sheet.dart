@@ -287,7 +287,7 @@ class _TaskAdditionSheetState extends ConsumerState<TaskAdditionSheet> {
     
     SiyaqToast.show(
       context,
-      'تمت إضافة المهمة بنجاح في سياق ✨',
+      'تمت إضافة المهمة بنجاح في ميقاف ✨',
       type: SiyaqToastType.success,
     );
   }
@@ -411,7 +411,7 @@ class _TaskAdditionSheetState extends ConsumerState<TaskAdditionSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'إضافة مهمة في سياق',
+                  'إضافة مهمة في ميقاف',
                   style: TextStyle(
                     fontSize: 18, 
                     fontWeight: FontWeight.bold,
@@ -778,7 +778,7 @@ class _TaskAdditionSheetState extends ConsumerState<TaskAdditionSheet> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               child: Text(
-                widget.taskToEdit != null ? 'حفظ التعديلات' : 'حفظ المهمة في سياق',
+                widget.taskToEdit != null ? 'حفظ التعديلات' : 'حفظ المهمة في ميقاف',
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),

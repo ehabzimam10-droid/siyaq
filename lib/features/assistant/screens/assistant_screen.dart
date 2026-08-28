@@ -26,7 +26,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
   final List<Map<String, String>> _messages = [
     {
       'role': 'model',
-      'message': 'أهلاً بك! أنا مساعدك الذكي سياق AI. كيف يمكنني مساعدتك في تخطيط وجدولة يومك بما يتناسب مع صلواتك اليوم؟ يمكنك إخباري بجدولك المعتاد وسأقوم بتعديله لك تلقائياً.'
+      'message': 'أهلاً بك! أنا مساعدك الذكي ميقاف AI. كيف يمكنني مساعدتك في تخطيط وجدولة يومك بما يتناسب مع صلواتك اليوم؟ يمكنك إخباري بجدولك المعتاد وسأقوم بتعديله لك تلقائياً.'
     }
   ];
   
@@ -270,7 +270,7 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                           fontSize: 14,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'اطلب من سياق تنظيم يومك...',
+                          hintText: 'اطلب من ميقاف تنظيم يومك...',
                           hintStyle: TextStyle(
                             color: isDark ? Colors.white38 : const Color(0xFF94A3B8),
                             fontSize: 14,
