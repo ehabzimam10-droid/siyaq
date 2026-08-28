@@ -181,18 +181,34 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               alignment: Alignment.topCenter,
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 1080.0),
-                child: ListView(
-                  controller: widget.scrollController,
-                  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                  padding: EdgeInsets.only(
-                    top: 90.0,
-                    left: isMobile ? 12.0 : 20.0,
-                    right: isMobile ? 12.0 : 20.0,
-                    bottom: 100.0,
-                  ),
-                  children: [
-                    // 1. كارت الصلاة القادمة المتجاوب
-                    SolariumGlassContainer(
+                child: RefreshIndicator(
+                  color: SiyaqColors.accentGold,
+                  backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                  edgeOffset: 85.0,
+                  onRefresh: () async {
+                    ref.invalidate(scheduleProvider);
+                    ref.invalidate(prayerTimesProvider(selectedDate));
+                    await Future.delayed(const Duration(milliseconds: 450));
+                    if (context.mounted) {
+                      SiyaqToast.show(
+                        context,
+                        'تم تحديث جدول اليوم ومواقيت الصلاة 🔄',
+                        type: SiyaqToastType.info,
+                      );
+                    }
+                  },
+                  child: ListView(
+                    controller: widget.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                    padding: EdgeInsets.only(
+                      top: 90.0,
+                      left: isMobile ? 12.0 : 20.0,
+                      right: isMobile ? 12.0 : 20.0,
+                      bottom: 100.0,
+                    ),
+                    children: [
+                      // 1. كارت الصلاة القادمة المتجاوب
+                      SolariumGlassContainer(
                       margin: const EdgeInsets.only(bottom: 12.0),
                       padding: EdgeInsets.symmetric(
                         horizontal: isMobile ? 14.0 : 18.0,
@@ -426,7 +442,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ],
                 ),
               ),
-            );
+            ),
+          );
           },
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/widgets/floating_app_bar.dart';
 import '../../../core/widgets/floating_bottom_bar.dart';
 import '../../../core/widgets/fluid_background.dart';
@@ -27,6 +28,47 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
+    _restoreActiveTab();
+  }
+
+  // استعادة التبويب النشط بعد إعادة تحميل أو تحديث الصفحة
+  Future<void> _restoreActiveTab() async {
+    try {
+      final uri = Uri.base;
+      if (uri.hasFragment && uri.fragment.isNotEmpty) {
+        final fragment = uri.fragment.toLowerCase();
+        if (fragment.contains('calendar') || fragment.contains('تقويم')) {
+          if (mounted) setState(() => _currentIndex = 1);
+          return;
+        } else if (fragment.contains('assistant') || fragment.contains('ai') || fragment.contains('مساعد')) {
+          if (mounted) setState(() => _currentIndex = 2);
+          return;
+        } else if (fragment.contains('settings') || fragment.contains('إعدادات')) {
+          if (mounted) setState(() => _currentIndex = 3);
+          return;
+        } else if (fragment.contains('home') || fragment.contains('dashboard') || fragment.contains('رئيسية')) {
+          if (mounted) setState(() => _currentIndex = 0);
+          return;
+        }
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      final savedTab = prefs.getInt('meeqaf_active_tab_index');
+      if (savedTab != null && savedTab >= 0 && savedTab <= 3 && mounted) {
+        setState(() {
+          _currentIndex = savedTab;
+        });
+      }
+    } catch (_) {}
+  }
+
+  void _onTabChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setInt('meeqaf_active_tab_index', index);
+    });
   }
   
   // وحدات التحكم بالتمرير لكل شاشة لتعديل الشريط العلوي ديناميكياً
@@ -131,11 +173,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               FloatingBottomBarItem(icon: Icons.assistant_rounded, label: 'المساعد'),
               FloatingBottomBarItem(icon: Icons.settings_rounded, label: 'الإعدادات'),
             ],
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
+            onTap: _onTabChanged,
           ),
         ),
       ),

@@ -198,15 +198,27 @@ class CalendarScreen extends ConsumerWidget {
             alignment: Alignment.topCenter,
             child: Container(
               constraints: const BoxConstraints(maxWidth: 1080.0),
-              child: ListView(
-                controller: scrollController,
-                physics: const ClampingScrollPhysics(),
-                padding: EdgeInsets.only(
-                  top: 95.0,
-                  left: isMobile ? 12.0 : 16.0,
-                  right: isMobile ? 12.0 : 16.0,
-                  bottom: 100.0,
-                ),
+              child: RefreshIndicator(
+                color: SiyaqColors.accentGold,
+                backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                edgeOffset: 90.0,
+                onRefresh: () async {
+                  ref.invalidate(scheduleProvider);
+                  ref.invalidate(prayerTimesProvider(selectedDate));
+                  await Future.delayed(const Duration(milliseconds: 450));
+                  if (context.mounted) {
+                    SiyaqToast.show(context, 'تم تحديث جدول التقويم ومواقيت الصلاة 🔄', type: SiyaqToastType.info);
+                  }
+                },
+                child: ListView(
+                  controller: scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+                  padding: EdgeInsets.only(
+                    top: 95.0,
+                    left: isMobile ? 12.0 : 16.0,
+                    right: isMobile ? 12.0 : 16.0,
+                    bottom: 100.0,
+                  ),
                 children: [
                   // محدد التاريخ الطافي المدمج مع أسهم التنقل السريع
                   Builder(
@@ -443,6 +455,7 @@ class CalendarScreen extends ConsumerWidget {
               ),
             ),
           ),
+        ),
         ),
       ),
     );

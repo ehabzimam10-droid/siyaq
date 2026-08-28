@@ -61,14 +61,14 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
     final screenHeight = mediaQuery.size.height;
     const fabSize = 62.0;
 
-    // حدود الأمان الدقيقة: تمنع تماماً دخول الزر تحت الشريط العلوي أو السفلي
-    final minX = 12.0;
-    final maxX = math.max(minX, screenWidth - fabSize - 12.0);
-    final minY = mediaQuery.padding.top + 72.0; // أسفل الشريط العلوي
-    final maxY = math.max(minY, screenHeight - mediaQuery.padding.bottom - 88.0 - fabSize); // أعلى الشريط السفلي
+    // حدود الأمان: تمنع الخروج عن الشاشة أو الدخول تحت الشريط العلوي أو السفلي
+    final minX = 8.0;
+    final maxX = math.max(minX, screenWidth - fabSize - 8.0);
+    final minY = mediaQuery.padding.top + 70.0; // أسفل الشريط العلوي
+    final maxY = math.max(minY, screenHeight - mediaQuery.padding.bottom - 90.0 - fabSize); // أعلى الشريط السفلي
 
     // تهيئة الموضع المبدئي وتثبيته داخل الحدود الآمنة
-    final currentPos = _position ?? Offset(maxX - 8.0, maxY - 16.0);
+    final currentPos = _position ?? Offset(maxX - 8.0, maxY - 12.0);
     final clampedPos = Offset(
       currentPos.dx.clamp(minX, maxX),
       currentPos.dy.clamp(minY, maxY),
@@ -77,33 +77,39 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
     return Positioned(
       left: clampedPos.dx,
       top: clampedPos.dy,
-      child: GestureDetector(
+      child: Listener(
         behavior: HitTestBehavior.opaque,
-        onPanStart: (_) {
+        onPointerDown: (event) {
           _dragDistance = 0;
           setState(() {
             _isDragging = true;
             _position = clampedPos;
           });
         },
-        onPanUpdate: (details) {
-          _dragDistance += details.delta.distance;
+        onPointerMove: (event) {
+          if (!_isDragging) return;
+          _dragDistance += event.delta.distance;
           final cur = _position ?? clampedPos;
-          final nextX = (cur.dx + details.delta.dx).clamp(minX, maxX);
-          final nextY = (cur.dy + details.delta.dy).clamp(minY, maxY);
+          final nextX = (cur.dx + event.delta.dx).clamp(minX, maxX);
+          final nextY = (cur.dy + event.delta.dy).clamp(minY, maxY);
           setState(() {
             _position = Offset(nextX, nextY);
           });
         },
-        onPanEnd: (_) {
+        onPointerUp: (event) {
+          final wasDragging = _isDragging;
           setState(() {
             _isDragging = false;
           });
-          if (_dragDistance < 8) {
+          if (wasDragging && _dragDistance < 10) {
             _openTaskSheet(context);
           }
         },
-        onTap: () => _openTaskSheet(context),
+        onPointerCancel: (_) {
+          setState(() {
+            _isDragging = false;
+          });
+        },
         child: AnimatedScale(
           scale: _isDragging ? 1.15 : 1.0,
           duration: const Duration(milliseconds: 150),
