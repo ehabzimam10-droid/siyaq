@@ -1,0 +1,96 @@
+version: "2"
+type: frontend
+tech_stack:
+  - Dart
+  - Flutter
+  - Flutter Riverpod
+  - Material Design
+routes:
+  - path: /
+    file: lib/features/home/screens/home_screen.dart
+    auth_required: false
+    description: Main home container screen with floating app bar and bottom navigation bar
+  - path: /dashboard
+    file: lib/features/dashboard/screens/dashboard_screen.dart
+    auth_required: false
+    description: Dashboard view with daily timeline, prayer blocks, free time slots, and task items
+  - path: /calendar
+    file: lib/features/calendar/screens/calendar_screen.dart
+    auth_required: false
+    description: Calendar view for selecting dates, viewing tasks per date, and adding new tasks
+  - path: /assistant
+    file: lib/features/assistant/screens/assistant_screen.dart
+    auth_required: false
+    description: AI assistant chat and schedule generation screen
+  - path: /settings
+    file: lib/features/settings/screens/settings_screen.dart
+    auth_required: false
+    description: Settings screen for prayer timing offsets, prayer durations, API keys, theme mode, and reset
+features:
+  - name: Navigation & Theme Toggle
+    description: Switch between main tabs and toggle Light/Dark/System theme modes
+    files:
+      - lib/features/home/screens/home_screen.dart
+      - lib/core/widgets/floating_app_bar.dart
+      - lib/core/widgets/floating_bottom_bar.dart
+    entry_route: /
+    user_interactions:
+      - Click navigation tabs in bottom bar
+      - Click theme toggle icon in app bar
+      - Click profile avatar icon
+    api_calls: []
+    auth_required: false
+  - name: Daily Dashboard Timeline
+    description: Displays dynamic timeline with prayer blocks, user tasks, and free time slots
+    files:
+      - lib/features/dashboard/screens/dashboard_screen.dart
+      - lib/core/services/schedule_adjuster.dart
+    entry_route: /
+    user_interactions:
+      - Scroll through timeline
+      - Tap free time slots to open task creation sheet
+      - Delete existing tasks from timeline
+    api_calls:
+      - method: GET
+        endpoint: https://api.aladhan.com/v1/timings
+    auth_required: false
+  - name: Task Addition & Conflict Resolution
+    description: Add new tasks with sleep mode, prayer reaction settings, and overlap conflict handling
+    files:
+      - lib/features/dashboard/widgets/task_addition_sheet.dart
+      - lib/features/calendar/screens/calendar_screen.dart
+    entry_route: /calendar
+    user_interactions:
+      - Click floating action button to open task sheet
+      - Enter task title and optional description
+      - Select task start and end times
+      - Select task type and prayer reaction mode
+      - Submit form to save task or resolve conflict dialog
+    api_calls: []
+    auth_required: false
+  - name: Prayer Customization & Settings
+    description: Adjust prayer start offsets, prayer durations, and AI API keys
+    files:
+      - lib/features/settings/screens/settings_screen.dart
+      - lib/features/settings/providers/settings_provider.dart
+    entry_route: /settings
+    user_interactions:
+      - Adjust prayer offset sliders (-20m to +20m)
+      - Adjust prayer duration sliders (10m to 60m)
+      - Input Gemini or OpenAI API keys
+      - Click reset settings button
+    api_calls: []
+    auth_required: false
+  - name: Weekly & Special Day Schedule Managers
+    description: Manage recurring weekly routines and special day templates
+    files:
+      - lib/features/settings/screens/weekly_schedule_manager.dart
+      - lib/features/settings/screens/templates_manager_screen.dart
+    entry_route: /settings
+    user_interactions:
+      - Navigate to weekly schedule manager
+      - Add and delete weekly recurring tasks
+      - Copy weekday routines to special dates or Ramadan mode
+    api_calls: []
+    auth_required: false
+known_limitations: []

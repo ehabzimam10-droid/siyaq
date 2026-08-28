@@ -1,0 +1,40 @@
+diff --git a/pubspec.yaml b/pubspec.yaml
+--- a/pubspec.yaml
++++ b/pubspec.yaml
+@@ -32,2 +32,4 @@
+     sdk: flutter
++  flutter_localizations:
++    sdk: flutter
+ 
+diff --git a/lib/main.dart b/lib/main.dart
+--- a/lib/main.dart
++++ b/lib/main.dart
+@@ -1,4 +1,6 @@
+ import 'package:flutter/material.dart';
+ import 'package:flutter_riverpod/flutter_riverpod.dart';
++import 'package:intl/date_symbol_data_local.dart';
++import 'package:flutter_localizations/flutter_localizations.dart';
+ import 'core/theme/theme.dart';
+ import 'features/home/screens/home_screen.dart';
+ 
+-void main() {
++void main() async {
+   // التأكد من تهيئة الـ bindings قبل أي شيء
+   WidgetsFlutterBinding.ensureInitialized();
++  await initializeDateFormatting('ar', null);
+   
+   runApp(
+@@ -22,4 +24,14 @@
+   Widget build(BuildContext context) {
+     return MaterialApp(
++      locale: const Locale('ar'),
++      supportedLocales: const [
++        Locale('ar'),
++      ],
++      localizationsDelegates: const [
++        GlobalMaterialLocalizations.delegate,
++        GlobalWidgetsLocalizations.delegate,
++        GlobalCupertinoLocalizations.delegate,
++      ],
+       title: 'سياق',
+       debugShowCheckedModeBanner: false,

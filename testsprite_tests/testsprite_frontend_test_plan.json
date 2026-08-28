@@ -1,0 +1,627 @@
+[
+  {
+    "id": "TC001",
+    "title": "Switch between main app sections",
+    "description": "This test verifies that a user can move between the main sections of the app from the home shell and see each section load.",
+    "category": "Navigation & Theme Toggle",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Click the dashboard tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard section is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click the calendar tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the calendar section is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click the assistant tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the assistant section is displayed"
+      },
+      {
+        "type": "action",
+        "description": "Click the settings tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the settings section is displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Review the daily dashboard timeline",
+    "description": "This test verifies that a user can open the dashboard and see the day's prayer blocks, free time, and tasks in the timeline.",
+    "category": "Daily Dashboard Timeline",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Scroll through the timeline"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify prayer blocks are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify free time slots are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify task items are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Adjust prayer offsets and see the dashboard update",
+    "description": "This verifies that changing prayer offsets in settings updates prayer start times on the dashboard timeline.",
+    "category": "Prayer Customization & Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Adjust the prayer offset for one prayer within the allowed range"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify prayer times on the timeline are updated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify prayer blocks are displayed on the timeline"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Adjust prayer durations and see prayer blocks resize",
+    "description": "This verifies that changing prayer durations in settings updates the length of prayer blocks on the dashboard timeline.",
+    "category": "Prayer Customization & Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Adjust the duration for one prayer within the allowed range"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify prayer block lengths are updated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the daily timeline remains visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Start creating a task from a free slot",
+    "description": "This test verifies that tapping a free time slot on the dashboard opens task creation with the selected time range prefilled.",
+    "category": "Daily Dashboard Timeline",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Tap a free time slot"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task creation sheet opens"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected time range is prefilled"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Delete a dashboard task and see the timeline update",
+    "description": "This test verifies that a user can remove an existing task from the dashboard and see it disappear from the timeline.",
+    "category": "Daily Dashboard Timeline",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Select an existing task in the timeline"
+      },
+      {
+        "type": "action",
+        "description": "Delete the task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task is no longer displayed in the timeline"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Create a task with details and save it to the calendar",
+    "description": "This test verifies that a user can create a normal task from the calendar with title, description, time range, task type, and prayer reaction settings.",
+    "category": "Task Addition & Conflict Resolution",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendar"
+      },
+      {
+        "type": "action",
+        "description": "Open the task creation flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the task title field with Study session"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the task description field with Review Islamic history notes"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start time"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end time"
+      },
+      {
+        "type": "action",
+        "description": "Choose a task type"
+      },
+      {
+        "type": "action",
+        "description": "Choose a prayer reaction mode"
+      },
+      {
+        "type": "action",
+        "description": "Submit the task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new task is displayed in the schedule"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Change theme mode from the app shell",
+    "description": "This test verifies that a user can switch the app appearance between theme modes from the main shell.",
+    "category": "Navigation & Theme Toggle",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the theme controls"
+      },
+      {
+        "type": "action",
+        "description": "Switch to dark mode"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the app appearance changes to dark mode"
+      },
+      {
+        "type": "action",
+        "description": "Open the theme controls"
+      },
+      {
+        "type": "action",
+        "description": "Switch to system theme"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the app appearance follows the system theme"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Create a recurring weekly routine",
+    "description": "This verifies that adding a recurring task in the weekly schedule manager makes it available in the weekly routine list.",
+    "category": "Weekly & Special Day Schedule Managers",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the weekly schedule manager"
+      },
+      {
+        "type": "action",
+        "description": "Add a recurring task for a weekday"
+      },
+      {
+        "type": "action",
+        "description": "Save the routine"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the weekly routine list shows the new recurring task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the routine remains available after saving"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Create an overlapping task and resolve the conflict",
+    "description": "This test verifies that a user can submit a task that overlaps an existing one, choose a conflict resolution option, and see the final schedule update.",
+    "category": "Task Addition & Conflict Resolution",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendar"
+      },
+      {
+        "type": "action",
+        "description": "Open the task creation flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the task title field with Existing focus block"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start time"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end time"
+      },
+      {
+        "type": "action",
+        "description": "Choose a task type"
+      },
+      {
+        "type": "action",
+        "description": "Choose a prayer reaction mode"
+      },
+      {
+        "type": "action",
+        "description": "Submit the task"
+      },
+      {
+        "type": "action",
+        "description": "Open the task creation flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the task title field with Overlap test task"
+      },
+      {
+        "type": "action",
+        "description": "Select a start time that overlaps the existing task"
+      },
+      {
+        "type": "action",
+        "description": "Select an end time that overlaps the existing task"
+      },
+      {
+        "type": "action",
+        "description": "Choose a task type"
+      },
+      {
+        "type": "action",
+        "description": "Choose a prayer reaction mode"
+      },
+      {
+        "type": "action",
+        "description": "Submit the task"
+      },
+      {
+        "type": "action",
+        "description": "Choose a conflict resolution option"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the schedule updates to reflect the chosen conflict resolution"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Reset settings back to defaults",
+    "description": "This verifies that confirming a reset restores prayer settings, theme mode, and stored credentials to default values.",
+    "category": "Prayer Customization & Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Change a prayer setting and a theme setting"
+      },
+      {
+        "type": "action",
+        "description": "Save the settings"
+      },
+      {
+        "type": "action",
+        "description": "Choose reset settings"
+      },
+      {
+        "type": "action",
+        "description": "Confirm the reset action"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify prayer settings are restored to defaults"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the theme and stored credentials are restored to defaults"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Copy weekly routines into Ramadan templates",
+    "description": "This verifies that copying weekday routines into Ramadan mode populates the Ramadan template schedule with the source routine pattern.",
+    "category": "Weekly & Special Day Schedule Managers",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the template manager"
+      },
+      {
+        "type": "action",
+        "description": "Copy weekday routines into Ramadan mode"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the Ramadan template is populated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the copied schedule follows the selected routine pattern"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Copy weekly routines into a special date template",
+    "description": "This verifies that copying weekday routines into a special date template populates the template schedule with the source routine pattern.",
+    "category": "Weekly & Special Day Schedule Managers",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the template manager"
+      },
+      {
+        "type": "action",
+        "description": "Copy weekday routines into a special date template"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the special date template is populated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the copied schedule matches the selected routine pattern"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC014",
+    "title": "Create a sleep mode task",
+    "description": "This test verifies that a user can save a task with sleep mode enabled and see it stored with sleep behavior applied.",
+    "category": "Task Addition & Conflict Resolution",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /calendar"
+      },
+      {
+        "type": "action",
+        "description": "Open the task creation flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the task title field with Sleep routine"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid start time"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid end time"
+      },
+      {
+        "type": "action",
+        "description": "Choose a task type"
+      },
+      {
+        "type": "action",
+        "description": "Choose a prayer reaction mode"
+      },
+      {
+        "type": "action",
+        "description": "Enable sleep mode for the task"
+      },
+      {
+        "type": "action",
+        "description": "Submit the task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task is displayed with sleep mode applied"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC015",
+    "title": "Save AI API keys and keep them stored in settings",
+    "description": "This verifies that entering a Gemini or OpenAI API key and saving it keeps the credential values available in settings after saving.",
+    "category": "Prayer Customization & Settings",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Enter a Gemini API key value into the Gemini key field"
+      },
+      {
+        "type": "action",
+        "description": "Enter an OpenAI API key value into the OpenAI key field"
+      },
+      {
+        "type": "action",
+        "description": "Save the settings"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the saved API key fields remain populated"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the settings screen shows the stored credentials"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC016",
+    "title": "Delete an existing weekly routine",
+    "description": "This verifies that deleting a recurring weekly task removes it from the weekly routine list.",
+    "category": "Weekly & Special Day Schedule Managers",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /settings"
+      },
+      {
+        "type": "action",
+        "description": "Open the weekly schedule manager"
+      },
+      {
+        "type": "action",
+        "description": "Create a recurring task for a weekday"
+      },
+      {
+        "type": "action",
+        "description": "Delete the recurring task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the weekly routine list no longer shows the deleted task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the routine list updates after deletion"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC017",
+    "title": "Select and keep a profile avatar",
+    "description": "This test verifies that a user can choose a profile avatar from the shell and see the selection remain in place while navigating the app.",
+    "category": "Navigation & Theme Toggle",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /"
+      },
+      {
+        "type": "action",
+        "description": "Open the profile avatar controls"
+      },
+      {
+        "type": "action",
+        "description": "Choose a different avatar"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected avatar is shown"
+      },
+      {
+        "type": "action",
+        "description": "Click the dashboard tab"
+      },
+      {
+        "type": "action",
+        "description": "Click the settings tab"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected avatar remains visible"
+      }
+    ],
+    "priority": "Medium"
+  }
+]
