@@ -1,8 +1,19 @@
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../../features/dashboard/widgets/task_addition_sheet.dart';
+
+/// Recognizer that immediately claims the gesture arena so underlying scrollables
+/// (like ListView) and browser touch-scroll cannot steal or cancel the drag.
+class _ImmediatePanGestureRecognizer extends PanGestureRecognizer {
+  @override
+  void addAllowedPointer(PointerDownEvent event) {
+    super.addAllowedPointer(event);
+    resolve(GestureDisposition.accepted);
+  }
+}
 
 class LiquidDraggableFab extends StatefulWidget {
   final DateTime? initialDate;
@@ -21,6 +32,7 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
   late AnimationController _orbController;
   Offset? _position;
   bool _isDragging = false;
+  double _dragDistance = 0;
 
   @override
   void initState() {
@@ -51,8 +63,6 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
     );
   }
 
-  double _dragDistance = 0;
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -62,13 +72,14 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
     const fabSize = 62.0;
 
     // حدود الأمان: تمنع الخروج عن الشاشة أو الدخول تحت الشريط العلوي أو السفلي
-    final minX = 8.0;
-    final maxX = math.max(minX, screenWidth - fabSize - 8.0);
-    final minY = mediaQuery.padding.top + 70.0; // أسفل الشريط العلوي
-    final maxY = math.max(minY, screenHeight - mediaQuery.padding.bottom - 90.0 - fabSize); // أعلى الشريط السفلي
+    final minX = 12.0;
+    final maxX = math.max(minX, screenWidth - fabSize - 12.0);
+    final minY = mediaQuery.padding.top + 72.0; // أسفل الشريط العلوي
+    final maxY = math.max(minY, screenHeight - mediaQuery.padding.bottom - 95.0 - fabSize); // أعلى الشريط السفلي
 
-    // تهيئة الموضع المبدئي وتثبيته داخل الحدود الآمنة
-    final currentPos = _position ?? Offset(maxX - 8.0, maxY - 12.0);
+    // الموضع المبدئي الافتراضي أسفل يمين الشاشة (فوق الشريط السفلي)
+    final defaultPos = Offset(maxX - 8.0, maxY - 12.0);
+    final currentPos = _position ?? defaultPos;
     final clampedPos = Offset(
       currentPos.dx.clamp(minX, maxX),
       currentPos.dy.clamp(minY, maxY),
@@ -77,39 +88,45 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
     return Positioned(
       left: clampedPos.dx,
       top: clampedPos.dy,
-      child: Listener(
+      child: RawGestureDetector(
+        gestures: {
+          _ImmediatePanGestureRecognizer: GestureRecognizerFactoryWithHandlers<_ImmediatePanGestureRecognizer>(
+            () => _ImmediatePanGestureRecognizer(),
+            (_ImmediatePanGestureRecognizer instance) {
+              instance.onStart = (DragStartDetails details) {
+                _dragDistance = 0;
+                setState(() {
+                  _isDragging = true;
+                  _position = clampedPos;
+                });
+              };
+              instance.onUpdate = (DragUpdateDetails details) {
+                _dragDistance += details.delta.distance;
+                final cur = _position ?? clampedPos;
+                final nextX = (cur.dx + details.delta.dx).clamp(minX, maxX);
+                final nextY = (cur.dy + details.delta.dy).clamp(minY, maxY);
+                setState(() {
+                  _position = Offset(nextX, nextY);
+                });
+              };
+              instance.onEnd = (DragEndDetails details) {
+                final wasDragging = _isDragging;
+                setState(() {
+                  _isDragging = false;
+                });
+                if (wasDragging && _dragDistance < 10) {
+                  _openTaskSheet(context);
+                }
+              };
+              instance.onCancel = () {
+                setState(() {
+                  _isDragging = false;
+                });
+              };
+            },
+          ),
+        },
         behavior: HitTestBehavior.opaque,
-        onPointerDown: (event) {
-          _dragDistance = 0;
-          setState(() {
-            _isDragging = true;
-            _position = clampedPos;
-          });
-        },
-        onPointerMove: (event) {
-          if (!_isDragging) return;
-          _dragDistance += event.delta.distance;
-          final cur = _position ?? clampedPos;
-          final nextX = (cur.dx + event.delta.dx).clamp(minX, maxX);
-          final nextY = (cur.dy + event.delta.dy).clamp(minY, maxY);
-          setState(() {
-            _position = Offset(nextX, nextY);
-          });
-        },
-        onPointerUp: (event) {
-          final wasDragging = _isDragging;
-          setState(() {
-            _isDragging = false;
-          });
-          if (wasDragging && _dragDistance < 10) {
-            _openTaskSheet(context);
-          }
-        },
-        onPointerCancel: (_) {
-          setState(() {
-            _isDragging = false;
-          });
-        },
         child: AnimatedScale(
           scale: _isDragging ? 1.15 : 1.0,
           duration: const Duration(milliseconds: 150),
@@ -125,55 +142,48 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: [
-                    // Ambient Liquid Halo Glow
+                    // هالة زجاجية شفافة وناعمة
                     BoxShadow(
-                      color: (isDark ? SiyaqColors.accentGold : const Color(0xFFD97706)).withOpacity(isDark ? 0.55 : 0.40),
-                      blurRadius: _isDragging ? 36 : 24,
-                      spreadRadius: _isDragging ? 4 : 2,
-                      offset: const Offset(0, 8),
-                    ),
-                    // Drop shadow
-                    BoxShadow(
-                      color: Colors.black.withOpacity(isDark ? 0.50 : 0.20),
-                      blurRadius: 16,
-                      spreadRadius: -2,
-                      offset: const Offset(0, 6),
+                      color: (isDark ? SiyaqColors.accentGold : const Color(0xFFD97706)).withOpacity(isDark ? 0.25 : 0.20),
+                      blurRadius: _isDragging ? 24 : 16,
+                      spreadRadius: _isDragging ? 2 : 1,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: ClipOval(
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                    // تأثير الزجاج المثلج الشفاف لإظهار ما خلف الزر بوضوح
+                    filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                     child: Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
+                        // خلفية نصف شفافة تتيح رؤية وقراءة النصوص والعناصر من خلفها
                         gradient: RadialGradient(
                           center: const Alignment(-0.35, -0.45),
                           radius: 0.95,
                           colors: isDark
                               ? [
-                                  Colors.white.withOpacity(0.50),
-                                  SiyaqColors.accentGold.withOpacity(0.40),
-                                  SiyaqColors.accentGoldDark.withOpacity(0.70),
-                                  const Color(0xFF0F172A).withOpacity(0.85),
+                                  Colors.white.withOpacity(0.22),
+                                  SiyaqColors.accentGold.withOpacity(0.18),
+                                  const Color(0xFF0F172A).withOpacity(0.35),
                                 ]
                               : [
-                                  Colors.white.withOpacity(0.90),
-                                  SiyaqColors.accentGoldLight.withOpacity(0.70),
-                                  SiyaqColors.accentGold.withOpacity(0.60),
-                                  const Color(0xFFB45309).withOpacity(0.75),
+                                  Colors.white.withOpacity(0.40),
+                                  SiyaqColors.accentGoldLight.withOpacity(0.25),
+                                  const Color(0xFFB45309).withOpacity(0.20),
                                 ],
-                          stops: const [0.0, 0.40, 0.75, 1.0],
+                          stops: const [0.0, 0.45, 1.0],
                         ),
                         border: Border.all(
-                          color: Colors.white.withOpacity(isDark ? 0.75 : 0.95),
-                          width: 2.0,
+                          color: (isDark ? Colors.white : SiyaqColors.accentGold).withOpacity(isDark ? 0.35 : 0.50),
+                          width: 1.5,
                         ),
                       ),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // 1. Water waves
+                          // 1. أمواج سائلة شفافة
                           CustomPaint(
                             size: const Size(fabSize, fabSize),
                             painter: _RealisticLiquidWaterPainter(
@@ -181,19 +191,19 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
                               isDark: isDark,
                             ),
                           ),
-                          // 2. Micro bubbles
+                          // 2. فقاعات دقيقة ناعمة
                           CustomPaint(
                             size: const Size(fabSize, fabSize),
                             painter: _LiquidMicroBubblesPainter(
                               progress: progress,
                             ),
                           ),
-                          // 3. Top lens highlight
+                          // 3. لمعة زجاجية علوية رقيقة
                           Positioned(
                             top: 4,
-                            left: 10,
-                            right: 10,
-                            height: 16,
+                            left: 12,
+                            right: 12,
+                            height: 14,
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: const BorderRadius.all(
@@ -203,27 +213,27 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    Colors.white.withOpacity(isDark ? 0.85 : 0.95),
+                                    Colors.white.withOpacity(isDark ? 0.45 : 0.60),
                                     Colors.white.withOpacity(0.0),
                                   ],
                                 ),
                               ),
                             ),
                           ),
-                          // 4. Center icon
+                          // 4. أيقونة الإضافة الذهبية
                           Icon(
                             Icons.add_rounded,
-                            color: isDark ? Colors.white : const Color(0xFF3B1A00),
+                            color: isDark ? Colors.white : const Color(0xFF78350F),
                             size: 32,
                             shadows: [
                               Shadow(
-                                color: Colors.black.withOpacity(0.50),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
+                                color: Colors.black.withOpacity(0.35),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1.5),
                               ),
                               Shadow(
-                                color: (isDark ? SiyaqColors.accentGoldLight : Colors.white).withOpacity(0.80),
-                                blurRadius: 8,
+                                color: (isDark ? SiyaqColors.accentGoldLight : Colors.white).withOpacity(0.60),
+                                blurRadius: 6,
                                 offset: const Offset(0, -1),
                               ),
                             ],
@@ -242,7 +252,7 @@ class _LiquidDraggableFabState extends State<LiquidDraggableFab>
   }
 }
 
-// Realistic Liquid Water & Caustics Painter
+// Realistic Liquid Water & Caustics Painter (Translucent Edition)
 class _RealisticLiquidWaterPainter extends CustomPainter {
   final double progress;
   final bool isDark;
@@ -260,33 +270,34 @@ class _RealisticLiquidWaterPainter extends CustomPainter {
 
     // 1. Organic Wave Path
     final wavePath = Path();
-    final baseLevel = height * 0.48;
+    final baseLevel = height * 0.52;
     wavePath.moveTo(0, baseLevel);
 
     for (double x = 0; x <= width; x++) {
       final y = baseLevel +
-          math.sin((x / width * 2 * math.pi) + animAngle) * 4.5 +
-          math.cos((x / width * 4 * math.pi) - animAngle * 1.5) * 2.0;
+          math.sin((x / width * 2 * math.pi) + animAngle) * 4.0 +
+          math.cos((x / width * 4 * math.pi) - animAngle * 1.5) * 1.8;
       wavePath.lineTo(x, y);
     }
     wavePath.lineTo(width, height);
     wavePath.lineTo(0, height);
     wavePath.close();
 
+    // ألوان أمواج شفافة تسمح برؤية النصوص خلفها
     final wavePaint = Paint()
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: isDark
             ? [
-                SiyaqColors.accentGoldLight.withOpacity(0.40),
-                SiyaqColors.accentGold.withOpacity(0.60),
-                SiyaqColors.accentGoldDark.withOpacity(0.75),
+                SiyaqColors.accentGoldLight.withOpacity(0.20),
+                SiyaqColors.accentGold.withOpacity(0.28),
+                SiyaqColors.accentGoldDark.withOpacity(0.35),
               ]
             : [
-                SiyaqColors.accentGoldLight.withOpacity(0.65),
-                SiyaqColors.accentGold.withOpacity(0.75),
-                const Color(0xFFB45309).withOpacity(0.85),
+                SiyaqColors.accentGoldLight.withOpacity(0.25),
+                SiyaqColors.accentGold.withOpacity(0.30),
+                const Color(0xFFB45309).withOpacity(0.35),
               ],
         stops: const [0.0, 0.5, 1.0],
       ).createShader(Rect.fromLTWH(0, 0, width, height));
@@ -319,11 +330,11 @@ class _LiquidMicroBubblesPainter extends CustomPainter {
     ];
 
     final bubblePaint = Paint()
-      ..color = Colors.white.withOpacity(0.65)
+      ..color = Colors.white.withOpacity(0.40)
       ..style = PaintingStyle.fill;
 
     for (var bubble in bubbles) {
-      canvas.drawCircle(bubble, 1.8, bubblePaint);
+      canvas.drawCircle(bubble, 1.6, bubblePaint);
     }
   }
 

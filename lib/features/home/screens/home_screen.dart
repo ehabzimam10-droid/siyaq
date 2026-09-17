@@ -160,9 +160,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   scrollController: _scrollControllers[_currentIndex],
                 ),
               ),
-              // الزر العائم السائل القابل للسحب والتحريك (يظهر فقط في صفحة التقويم)
-              if (_currentIndex == 1)
-                LiquidDraggableFab(initialDate: selectedDate),
+              // الزر العائم السائل القابل للسحب والتحريك (يظهر في الرئيسية والتقويم)
+              if (_currentIndex == 0 || _currentIndex == 1)
+                LiquidDraggableFab(key: const PageStorageKey('liquid_fab'), initialDate: selectedDate),
             ],
           ),
           bottomNavigationBar: FloatingBottomBar(
