@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import '../../assistant/screens/assistant_screen.dart';
 import '../../settings/screens/settings_screen.dart';
 import '../../settings/providers/settings_provider.dart';
 import '../../dashboard/providers/schedule_provider.dart';
+import '../../dashboard/widgets/task_addition_sheet.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   final int initialIndex;
@@ -23,12 +25,30 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   late int _currentIndex;
+  Offset? _fabPosition;
+  bool _isFabDragging = false;
+  double _fabDragDistance = 0;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
     _restoreActiveTab();
+  }
+
+  // فتح ورقة إضافة المهمة
+  void _openTaskSheet(BuildContext context, DateTime date) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (modalContext) {
+        return TaskAdditionSheet(
+          initialDate: date,
+          allowedTaskType: 'single_date',
+        );
+      },
+    );
   }
 
   // استعادة التبويب النشط بعد إعادة تحميل أو تحديث الصفحة
@@ -148,22 +168,78 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: Scaffold(
           backgroundColor: Colors.transparent,
           extendBody: true,
-          body: Stack(
-            children: [
-              _buildActiveScreen(),
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: FloatingAppBar(
-                  title: _buildAppBarTitle(),
-                  scrollController: _scrollControllers[_currentIndex],
-                ),
-              ),
-              // الزر العائم السائل القابل للسحب والتحريك (يظهر في الرئيسية والتقويم)
-              if (_currentIndex == 0 || _currentIndex == 1)
-                LiquidDraggableFab(key: const PageStorageKey('liquid_fab'), initialDate: selectedDate),
-            ],
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              final screenWidth = constraints.maxWidth;
+              final screenHeight = constraints.maxHeight;
+              const fabSize = 58.0;
+
+              // حدود الأمان: تمنع الخروج عن الشاشة أو الدخول تحت الشريط العلوي أو السفلي
+              final minX = 16.0;
+              final maxX = math.max(minX, screenWidth - fabSize - 16.0);
+              final minY = 80.0; // أسفل الشريط العلوي
+              final maxY = math.max(minY, screenHeight - 95.0 - fabSize); // أعلى الشريط السفلي
+
+              // الموضع المبدئي: أسفل يمين الشاشة (فوق الشريط السفلي)
+              final defaultPos = Offset(maxX - 8.0, maxY - 8.0);
+              final curX = (_fabPosition?.dx ?? defaultPos.dx).clamp(minX, maxX);
+              final curY = (_fabPosition?.dy ?? defaultPos.dy).clamp(minY, maxY);
+              final clampedPos = Offset(curX, curY);
+
+              return Stack(
+                children: [
+                  _buildActiveScreen(),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: FloatingAppBar(
+                      title: _buildAppBarTitle(),
+                      scrollController: _scrollControllers[_currentIndex],
+                    ),
+                  ),
+                  // الزر العائم السائل: كعنصر Positioned مباشر داخل الـ Stack لضمان الاستجابة التامة لكافة الاتجاهات
+                  if (_currentIndex == 0 || _currentIndex == 1)
+                    Positioned(
+                      left: clampedPos.dx,
+                      top: clampedPos.dy,
+                      child: LiquidDraggableFab(
+                        key: const PageStorageKey('liquid_fab'),
+                        initialDate: selectedDate,
+                        fabSize: fabSize,
+                        isDragging: _isFabDragging,
+                        onPanStart: (_) {
+                          _fabDragDistance = 0;
+                          setState(() {
+                            _isFabDragging = true;
+                            _fabPosition = clampedPos;
+                          });
+                        },
+                        onPanUpdate: (details) {
+                          _fabDragDistance += details.delta.distance;
+                          final nextX = (clampedPos.dx + details.delta.dx).clamp(minX, maxX);
+                          final nextY = (clampedPos.dy + details.delta.dy).clamp(minY, maxY);
+                          setState(() {
+                            _fabPosition = Offset(nextX, nextY);
+                          });
+                        },
+                        onPanEnd: (_) {
+                          final wasDragging = _isFabDragging;
+                          setState(() {
+                            _isFabDragging = false;
+                          });
+                          if (wasDragging && _fabDragDistance < 8) {
+                            _openTaskSheet(context, selectedDate);
+                          }
+                        },
+                        onTap: () {
+                          _openTaskSheet(context, selectedDate);
+                        },
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
           bottomNavigationBar: FloatingBottomBar(
             selectedIndex: _currentIndex,
