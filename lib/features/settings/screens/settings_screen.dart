@@ -9,6 +9,7 @@ import 'ramadan_schedule_manager.dart';
 import 'templates_manager_screen.dart';
 import 'api_keys_manager_screen.dart';
 import 'prayer_settings_screen.dart';
+import '../../../core/services/app_update_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   final ScrollController scrollController;
@@ -210,6 +211,36 @@ class SettingsScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
+                        ),
+                        Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFE2E8F0)),
+
+                        // فحص التحديثات الجديدة
+                        _buildNavTile(
+                          context: context,
+                          icon: Icons.system_update_rounded,
+                          iconColor: SiyaqColors.accentGold,
+                          iconBgColor: SiyaqColors.accentGold.withOpacity(isDark ? 0.2 : 0.1),
+                          title: 'التحقق من وجود تحديثات',
+                          subtitle: 'البحث عن إصدارات أحدث وتثبيتها مباشرة بضغطة زر',
+                          trailingWidget: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: SiyaqColors.accentGold.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'فحص 🔄',
+                              style: TextStyle(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.bold,
+                                color: SiyaqColors.accentGold,
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            AppUpdateService.checkForUpdate(context, isManualCheck: true);
+                          },
+                          isDark: isDark,
                         ),
                         Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFE2E8F0)),
 

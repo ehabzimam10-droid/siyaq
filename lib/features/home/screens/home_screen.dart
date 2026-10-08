@@ -7,6 +7,7 @@ import '../../../core/widgets/floating_bottom_bar.dart';
 import '../../../core/widgets/fluid_background.dart';
 import '../../../core/widgets/fluid_theme_transition.dart';
 import '../../../core/widgets/liquid_orb_fab.dart';
+import '../../../core/services/app_update_service.dart';
 import '../../dashboard/screens/dashboard_screen.dart';
 import '../../calendar/screens/calendar_screen.dart';
 import '../../assistant/screens/assistant_screen.dart';
@@ -34,6 +35,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.initState();
     _currentIndex = widget.initialIndex;
     _restoreActiveTab();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        AppUpdateService.checkForUpdate(context);
+      }
+    });
   }
 
   // فتح ورقة إضافة المهمة
