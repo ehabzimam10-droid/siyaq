@@ -1,7 +1,7 @@
 {
-  "version": "1.0.1",
-  "build_number": 2,
+  "version": "1.0.0",
+  "build_number": 1,
   "apk_url": "https://github.com/ehabzimam10-droid/siyaq/releases/latest/download/Meeqaf-release.apk",
-  "release_notes": "✨ تحسينات بصرية وسلاسة حركة الزر العائم وإصلاحات عامة في أداء ميقاف.",
+  "release_notes": "✨ الإصدار الرسمي الأول 1.0.0 لتطبيق ميقاف (Meeqaf):\n- تنظيم وجدولة المهام الذكية.\n- حساب مواقيت الصلاة الدقيقة وتنبيهاتها.\n- واجهة زجاجية فاخرة (Solarium Liquid Glass).\n- دعم نظام التحديثات المباشرة التلقائية دون الحاجة لمتجر التطبيقات.",
   "force_update": false
 }

@@ -312,7 +312,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'الإصدار 2.5.0 • النسخة الفخمة متعددة النماذج',
+                          'الإصدار 1.0.0 • النسخة الفخمة',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,

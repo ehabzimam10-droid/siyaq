@@ -37,3 +37,4 @@ migrate_working_dir/
 
 testsprite_tests\tmp\config.json
 .agents/
+/android/build/
